@@ -8,6 +8,7 @@ import timeit
 
 
 
+
 #### code for Genetic Tensor Decomposition (GTD), with Stochastic Gradient Descent (SGD) algorithm
 #### pick individual wiht all his/her samples (of all tissues), with probability propotional to pool size (for this indiv)
 #### we output the xxx
@@ -17,9 +18,8 @@ import timeit
 
 
 
-'''
+
 ##==================================================================================================================
-## pre-define the dimensions:
 ##
 T = np.load("./data_simu_gtd/T.npy")
 U = np.load("./data_simu_gtd/U.npy")
@@ -30,42 +30,7 @@ Beta = np.load("./data_simu_gtd/Beta.npy")
 Y = np.load("./data_simu_gtd/Y.npy")
 Y_spread = np.load("./data_simu_gtd/Y_spread.npy")					## this for now is a full tensor
 X = np.load("./data_simu_gtd/X.npy")
-
-
-
-## building the index pool for each individual (on the spread Y space)
-## NOTE: when the tensor is incomplete (or just on training dataset), we need to specially design this
-pool_index_indiv = {}
-dimension1 = len(T)
-dimension2 = len(U)
-dimension3 = len(V)
-for i in range(len(X)):
-	indiv = i
-	list_index = []
-	for k in range(dimension1):
-		list_index += (np.arange(dimension3) + k * dimension2 * dimension3 + i * dimension3).tolist()
-	pool_index_indiv[indiv] = list_index
-## building the list index for all individuals
-list_index_all = np.arange(dimension1 * dimension2 * dimension3)
-'''
-
-
-
-
-
-
-##==================================================================================================================
-## pre-define the dimensions:
 ##
-T = np.load("./data_simu_gtd/T.npy")
-U = np.load("./data_simu_gtd/U.npy")
-V = np.load("./data_simu_gtd/V.npy")
-##
-Beta = np.load("./data_simu_gtd/Beta.npy")
-##
-Y = np.load("./data_simu_gtd/Y.npy")
-Y_spread = np.load("./data_simu_gtd/Y_spread.npy")					## this for now is a full tensor
-X = np.load("./data_simu_gtd/X.npy")
 table_index_indiv = np.load("./data_simu_gtd/table_index_indiv.npy")
 pool_index_indiv = {}
 for i in range(len(table_index_indiv)):
@@ -78,13 +43,10 @@ list_p = np.load("./data_simu_gtd/list_p_indiv.npy")
 
 
 
-
-
-
+##
 dimension1 = len(T)
 dimension2 = len(U)
 dimension3 = len(V)
-
 feature_len = len(T[0])
 
 
@@ -94,8 +56,9 @@ feature_len = len(T[0])
 
 
 
-with tf.device("/cpu:0"):
 
+
+with tf.device("/cpu:0"):
 
 
 
@@ -113,6 +76,12 @@ with tf.device("/cpu:0"):
 	T = tf.Variable(initial_value=tf.truncated_normal([dimension1, 1, feature_len]), name='tissues')
 	U = tf.Variable(initial_value=tf.truncated_normal([dimension2, feature_len]), name='indivs')
 	V = tf.Variable(initial_value=tf.truncated_normal([dimension3, feature_len]), name='genes')
+
+
+
+	#### TODO: initialize the three with pre-loaded fm
+
+
 
 	TUD = tf.mul(T, U, name=None)					## dimension1 x dimension2 x feature_len
 	result = tf.einsum('kid,jd->kij', TUD, V)		## dimension1 x dimension2 x dimension3
@@ -196,32 +165,18 @@ with tf.device("/cpu:0"):
 	for i in xrange(1000):
 
 
-		'''
-		##
-		## pick up one individual --> here randomly, but in general should be proportional to the samples avaliable for this indiv
-		N = len(X)
-		# pick up individual
-		index = np.random.randint(N)
-		'''
-
-
-		#### sample based on tissues
-		N = len(X)
+		#### sample individuals based on tissues avaliable for that individual (unbiased sampling for loss function)
 		list_temp = np.random.multinomial(1, list_p)
 		index = np.argmax(list_temp)
-
-
-
-
-
 		list_index_x = [index]
 		# pick up sample indices (in the spread version of Y) for that individual
 		list_index_y = pool_index_indiv[index]
 		# call run and feed in data
 		sess.run(training_step, feed_dict={placeholder_index_x: list_index_x, x: [X[index]], placeholder_index_y: list_index_y, y: Y_spread[list_index_y]})
 
-		##
+		####
 		## training error
+		N = len(X)
 		list_index_x = np.arange(N)
 		print sess.run(cost_train, feed_dict={placeholder_index_x: list_index_x, x: X, placeholder_index_y: list_index_all, y: Y_spread[list_index_all]})
 
