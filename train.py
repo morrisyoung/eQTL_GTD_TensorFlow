@@ -73,13 +73,16 @@ with tf.device("/cpu:0"):
 
 	#### the tensor product
 	## for T, we have the extra dimension for broadcasting the multiply op
+	'''
 	T = tf.Variable(initial_value=tf.truncated_normal([dimension1, 1, feature_len]), name='tissues')
 	U = tf.Variable(initial_value=tf.truncated_normal([dimension2, feature_len]), name='indivs')
 	V = tf.Variable(initial_value=tf.truncated_normal([dimension3, feature_len]), name='genes')
-
-
-
-	#### TODO: initialize the three with pre-loaded fm
+	'''
+	#### initialize the three with pre-loaded fm
+	T = tf.Variable(initial_value=T, name='tissues')
+	U = tf.Variable(initial_value=U, name='indivs')
+	V = tf.Variable(initial_value=V, name='genes')
+	tf.expand_dims(T, 1)
 
 
 

@@ -147,6 +147,15 @@ if __name__ == "__main__":
 	print "X shape:", X.shape
 
 
+
+	## simulate another copy as the init
+	T = np.random.normal(mu, sigma, (K, D))
+	U = np.random.normal(mu, sigma, (I, D))
+	V = np.random.normal(mu, sigma, (J, D))
+
+
+
+
 	##==== saving
 	np.save("./data_simu_gtd/Y", Y)
 	np.save("./data_simu_gtd/T", T)
