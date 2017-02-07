@@ -166,6 +166,8 @@ if __name__ == "__main__":
 
 
 
+
+
 	#### spreading the Y
 	Y = np.load("./data_simu_gtd/Y.npy")
 	data = []
@@ -182,9 +184,86 @@ if __name__ == "__main__":
 
 
 
+
+
+	##################################################################
+	##################################################################
+	## we pick up some tissues for each indivual, and build the index
+	##
+	repo_tissue_indivial = {}
+
+	##
+	repo_indiv_tissues = {}
+	repo_indiv_index = {}
+	threshold = 0.5							## the portion of tissues we want to pick up for this indiv
+	for i in range(I):
+		indiv = i
+
+		list_index = np.arange(K)
+		list_index = np.random.permutation(list_index)
+		upper = int(K*threshold)
+		list_index = list_index[:upper]
+		list_index = np.sort(list_index)
+		repo_indiv_tissues[i] = list_index
+
+		##
+		list_temp = []
+		for k in list_index:
+			list_temp += (np.arange(J) + k * I * J + indiv * J).tolist()
+		repo_indiv_index[indiv] = list_temp
+
+		##
+		for k in list_index:
+			if k in repo_tissue_indivial:
+				repo_tissue_indivial[k].append(indiv)
+			else:
+				repo_tissue_indivial[k] = [indiv]
+	table = []
+	for i in range(I):
+		list_index = repo_indiv_index[i]
+		table.append(list_index)
+	table = np.array(table)
+	np.save("./data_simu_gtd/table_index_indiv", table)
+
+
+	##
+	list_p = []
+	for i in range(I):
+		count = len(repo_indiv_tissues[i])
+		list_p.append(count)
+	list_p = np.array(list_p)
+	list_p = list_p*1.0 / np.sum(list_p)
+	print list_p
+	print np.sum(list_p)
+	np.save("./data_simu_gtd/list_p_indiv", list_p)
+
+
+	##
+	print "tissue coverage is:", len(repo_tissue_indivial)
+
+	##
+	list_all = []
+	for k in range(K):
+		for indiv in repo_tissue_indivial[k]:
+			list_all += (np.arange(J) + k * I * J + indiv * J).tolist()
+
+	##
+	np.save("./data_simu_gtd/list_index_train", list_all)
+
+
+
+
+
+
+
+
+
+
 	##==== timer
 	elapsed = timeit.default_timer() - start_time
 	print "time spent:", elapsed
+
+
 
 
 

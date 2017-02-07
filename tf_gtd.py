@@ -17,7 +17,7 @@ import timeit
 
 
 
-
+'''
 ##==================================================================================================================
 ## pre-define the dimensions:
 ##
@@ -30,7 +30,6 @@ Beta = np.load("./data_simu_gtd/Beta.npy")
 Y = np.load("./data_simu_gtd/Y.npy")
 Y_spread = np.load("./data_simu_gtd/Y_spread.npy")					## this for now is a full tensor
 X = np.load("./data_simu_gtd/X.npy")
-
 
 
 
@@ -48,6 +47,36 @@ for i in range(len(X)):
 	pool_index_indiv[indiv] = list_index
 ## building the list index for all individuals
 list_index_all = np.arange(dimension1 * dimension2 * dimension3)
+'''
+
+
+
+
+
+
+##==================================================================================================================
+## pre-define the dimensions:
+##
+T = np.load("./data_simu_gtd/T.npy")
+U = np.load("./data_simu_gtd/U.npy")
+V = np.load("./data_simu_gtd/V.npy")
+##
+Beta = np.load("./data_simu_gtd/Beta.npy")
+##
+Y = np.load("./data_simu_gtd/Y.npy")
+Y_spread = np.load("./data_simu_gtd/Y_spread.npy")					## this for now is a full tensor
+X = np.load("./data_simu_gtd/X.npy")
+table_index_indiv = np.load("./data_simu_gtd/table_index_indiv.npy")
+pool_index_indiv = {}
+for i in range(len(table)):
+	pool_index_indiv[i] = table[i]
+list_index_all = np.load("./data_simu_gtd/list_index_train.npy")
+
+
+## for categorical draw:
+list_p = np.load("./data_simu_gtd/list_p_indiv.npy")
+
+
 
 
 
@@ -160,11 +189,24 @@ with tf.device("/cpu:0"):
 	start_time = timeit.default_timer()
 	for i in xrange(100):
 
+
+		'''
 		##
 		## pick up one individual --> here randomly, but in general should be proportional to the samples avaliable for this indiv
 		N = len(X)
 		# pick up individual
 		index = np.random.randint(N)
+		'''
+
+
+		#### sample based on tissues
+		list_temp = np.random.multinomial(1, list_p)
+		index = np.argmax(list_temp)
+
+
+
+
+
 		list_index_x = [index]
 		# pick up sample indices (in the spread version of Y) for that individual
 		list_index_y = pool_index_indiv[index]
@@ -174,11 +216,18 @@ with tf.device("/cpu:0"):
 		##
 		## training error
 		list_index_x = np.arange(N)
-		print sess.run(cost_train, feed_dict={placeholder_index_x: list_index_x, x: X, placeholder_index_y: list_index_all, y: Y_spread})
+		print sess.run(cost_train, feed_dict={placeholder_index_x: list_index_x, x: X, placeholder_index_y: list_index_all, y: Y_spread[list_index_all]})
 
 	##==== timer
 	elapsed = timeit.default_timer() - start_time
 	print "time spent:", elapsed
+
+
+
+
+
+
+
 
 
 
