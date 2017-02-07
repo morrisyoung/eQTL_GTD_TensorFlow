@@ -68,8 +68,8 @@ Y_spread = np.load("./data_simu_gtd/Y_spread.npy")					## this for now is a full
 X = np.load("./data_simu_gtd/X.npy")
 table_index_indiv = np.load("./data_simu_gtd/table_index_indiv.npy")
 pool_index_indiv = {}
-for i in range(len(table)):
-	pool_index_indiv[i] = table[i]
+for i in range(len(table_index_indiv)):
+	pool_index_indiv[i] = table_index_indiv[i]
 list_index_all = np.load("./data_simu_gtd/list_index_train.npy")
 
 
@@ -80,6 +80,12 @@ list_p = np.load("./data_simu_gtd/list_p_indiv.npy")
 
 
 
+
+dimension1 = len(T)
+dimension2 = len(U)
+dimension3 = len(V)
+
+feature_len = len(T[0])
 
 
 
@@ -133,24 +139,24 @@ with tf.device("/cpu:0"):
 
 	##==================================================================================================================
 	## cost function
-	base_cost = tf.reduce_mean(tf.square(tf.sub(y_, y)))
+	base_cost = tf.reduce_sum(tf.square(tf.sub(y_, y)))
 
 
 	## the prior for U --> genetic cost
 	U_sub = tf.gather(U, placeholder_index_x)
-	U_cost = tf.reduce_mean(tf.square(tf.sub(u_, U_sub)))
+	U_cost = tf.reduce_sum(tf.square(tf.sub(u_, U_sub)))
 
 
 	## the prior for V and T --> regularization (for V and T)
 	lda_VT = tf.constant(.001)
-	norm_sums = tf.add(tf.reduce_mean(tf.abs(T)),
-	                   tf.reduce_mean(tf.abs(V)))
+	norm_sums = tf.add(tf.reduce_sum(tf.abs(T)),
+	                   tf.reduce_sum(tf.abs(V)))
 	regularizer_VT = tf.mul(norm_sums, lda_VT)
 
 
 	## regularization (for Beta)
 	lda_beta = tf.constant(.001)
-	norm_sums_beta = tf.reduce_mean(tf.abs(beta))
+	norm_sums_beta = tf.reduce_sum(tf.abs(beta))
 	regularizer_beta = tf.mul(norm_sums_beta, lda_beta)
 
 
@@ -161,7 +167,7 @@ with tf.device("/cpu:0"):
 
 
 	## learning rate
-	lr = tf.constant(10.0, name='learning_rate')
+	lr = tf.constant(0.000001, name='learning_rate')
 	global_step = tf.Variable(0, trainable=False)
 	learning_rate = tf.train.exponential_decay(lr, global_step, 10000, 0.96, staircase=True)
 
@@ -187,7 +193,7 @@ with tf.device("/cpu:0"):
 
 	##==== timer
 	start_time = timeit.default_timer()
-	for i in xrange(100):
+	for i in xrange(1000):
 
 
 		'''
@@ -200,6 +206,7 @@ with tf.device("/cpu:0"):
 
 
 		#### sample based on tissues
+		N = len(X)
 		list_temp = np.random.multinomial(1, list_p)
 		index = np.argmax(list_temp)
 
