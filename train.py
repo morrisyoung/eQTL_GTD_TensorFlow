@@ -82,7 +82,7 @@ with tf.device("/cpu:0"):
 	T = tf.Variable(initial_value=T, name='tissues')
 	U = tf.Variable(initial_value=U, name='indivs')
 	V = tf.Variable(initial_value=V, name='genes')
-	tf.expand_dims(T, 1)
+	T = tf.expand_dims(T, 1)
 
 
 
