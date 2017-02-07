@@ -190,7 +190,7 @@ if __name__ == "__main__":
 	##################################################################
 	## we pick up some tissues for each indivual, and build the index
 	##
-	repo_tissue_indivial = {}
+	repo_tissue_indiv = {}
 
 	##
 	repo_indiv_tissues = {}
@@ -214,10 +214,10 @@ if __name__ == "__main__":
 
 		##
 		for k in list_index:
-			if k in repo_tissue_indivial:
-				repo_tissue_indivial[k].append(indiv)
+			if k in repo_tissue_indiv:
+				repo_tissue_indiv[k].append(indiv)
 			else:
-				repo_tissue_indivial[k] = [indiv]
+				repo_tissue_indiv[k] = [indiv]
 	table = []
 	for i in range(I):
 		list_index = repo_indiv_index[i]
@@ -233,18 +233,18 @@ if __name__ == "__main__":
 		list_p.append(count)
 	list_p = np.array(list_p)
 	list_p = list_p*1.0 / np.sum(list_p)
-	print list_p
+	#print list_p
 	print np.sum(list_p)
 	np.save("./data_simu_gtd/list_p_indiv", list_p)
 
 
 	##
-	print "tissue coverage is:", len(repo_tissue_indivial)
+	print "tissue coverage is:", len(repo_tissue_indiv)
 
 	##
 	list_all = []
 	for k in range(K):
-		for indiv in repo_tissue_indivial[k]:
+		for indiv in repo_tissue_indiv[k]:
 			list_all += (np.arange(J) + k * I * J + indiv * J).tolist()
 
 	##
