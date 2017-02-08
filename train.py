@@ -11,7 +11,10 @@ import timeit
 
 #### code for Genetic Tensor Decomposition (GTD), with Stochastic Gradient Descent (SGD) algorithm
 #### pick individual wiht all his/her samples (of all tissues), with probability propotional to pool size (for this indiv)
-#### we output the xxx
+
+
+
+
 
 
 
@@ -186,7 +189,6 @@ with tf.device("/cpu:0"):
 	##==== timer
 	elapsed = timeit.default_timer() - start_time
 	print "time spent:", elapsed
-
 
 
 
