@@ -79,9 +79,9 @@ with tf.device("/cpu:0"):
 	V = tf.Variable(initial_value=tf.truncated_normal([dimension3, feature_len]), name='genes')
 	'''
 	#### initialize the three with pre-loaded fm
-	T = tf.Variable(initial_value=T, name='tissues')
-	U = tf.Variable(initial_value=U, name='indivs')
-	V = tf.Variable(initial_value=V, name='genes')
+	T = tf.Variable(initial_value=T, dtype=tf.float32, name='tissues')
+	U = tf.Variable(initial_value=U, dtype=tf.float32, name='indivs')
+	V = tf.Variable(initial_value=V, dtype=tf.float32, name='genes')
 	T = tf.expand_dims(T, 1)
 
 
