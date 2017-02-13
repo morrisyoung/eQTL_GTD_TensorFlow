@@ -20,9 +20,8 @@ import timeit
 
 
 
-
-
 ##==================================================================================================================
+'''
 ##
 T = np.load("./data_simu_gtd/T.npy")
 U = np.load("./data_simu_gtd/U.npy")
@@ -43,6 +42,40 @@ list_index_all = np.load("./data_simu_gtd/list_index_train.npy")
 
 ## for categorical draw:
 list_p = np.load("./data_simu_gtd/list_p_indiv.npy")
+'''
+#### real data loader
+##
+T = np.load("./data_real_init/fm_tissue.npy")
+U = np.load("./data_real_init/fm_indiv.npy")
+V = np.load("./data_real_init/fm_gene.npy")
+##
+Beta = np.load("./data_real_init/Beta.npy")
+##
+#Y = np.load("./data_simu_gtd/Y.npy")
+Y_spread = np.load("./data_real_init/Y_spread.npy")					## this for now is a full tensor
+X = np.load("./data_real_init/X.npy")
+##
+table_index_indiv = np.load("./data_real_init/table_index_indiv.npy")
+pool_index_indiv = {}
+for i in range(len(table_index_indiv)):
+	pool_index_indiv[i] = table_index_indiv[i]
+list_index_all = np.load("./data_real_init/list_index_all.npy")
+
+
+## for categorical draw:
+list_p = np.load("./data_real_init/list_p_indiv.npy")
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -51,8 +84,6 @@ dimension1 = len(T)
 dimension2 = len(U)
 dimension3 = len(V)
 feature_len = len(T[0])
-
-
 
 
 
