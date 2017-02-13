@@ -30,7 +30,7 @@ V = np.load("./data_simu_gtd/V.npy")
 ##
 Beta = np.load("./data_simu_gtd/Beta.npy")
 ##
-Y = np.load("./data_simu_gtd/Y.npy")
+#Y = np.load("./data_simu_gtd/Y.npy")
 Y_spread = np.load("./data_simu_gtd/Y_spread.npy")					## this for now is a full tensor
 X = np.load("./data_simu_gtd/X.npy")
 ##
@@ -189,7 +189,6 @@ with tf.device("/cpu:0"):
 	##==== timer
 	elapsed = timeit.default_timer() - start_time
 	print "time spent:", elapsed
-
 
 
 

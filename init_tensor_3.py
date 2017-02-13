@@ -133,12 +133,23 @@ if __name__ == "__main__":
 	##
 	## solve the LASSO for each gene
 	####========================================================================
-	clf = linear_model.Lasso(alpha=0.1)						## NOTE: lASSO parameter tunable
+
+	#alpha = 0.1					## #0
+	#alpha = 0.2					## #1
+	alpha = 0.3					## #2
+	#alpha = 0.5					## #3
+	#alpha = 1.0					## #4
+
+
+
+
+	clf = linear_model.Lasso(alpha=alpha)						## NOTE: LASSO parameter tunable
 	clf.fit(X, Y)
 	init_beta_genefm = clf.coef_
 	print "init_beta_genefm shape:", init_beta_genefm.shape
-	init_beta_genefm = init_beta_genefm.T
 	np.save("./data_init/fm_gene", init_beta_genefm)
+
+
 
 
 
@@ -148,6 +159,7 @@ if __name__ == "__main__":
 	##==== sparse indicator
 	####
 	## save non-0 genes for each factor
+	init_beta_genefm = np.load("./data_init/fm_gene.npy")
 	print "non-zero genes for each factor:"
 	m_indi = []
 	for d in range(D):
@@ -162,6 +174,13 @@ if __name__ == "__main__":
 
 
 	## check and save effective SNPs for each factor
+	#
+	X = np.load("../preprocess/data_train/X.npy")
+	I = len(X[0])
+	#
+	data = np.load("../preprocess/data_train/Tensor_tissue_0.npy")
+	J = len(data[0])
+	#
 	print "output num of active genes and num of corresponding snps in each factor:"
 	mapping_cis = np.load("../preprocess/data_train/mapping_cis.npy")
 	m_indi_snp = []
