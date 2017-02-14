@@ -54,6 +54,9 @@ Beta = np.load("./data_real_init/Beta.npy")
 #Y = np.load("./data_simu_gtd/Y.npy")
 Y_spread = np.load("./data_real_init/Y_spread.npy")					## this for now is a full tensor
 X = np.load("./data_real_init/X.npy")
+array_ones = np.array([np.ones(len(X))]).T
+X = np.concatenate((X, array_ones), axis=1)
+
 ##
 table_index_indiv = np.load("./data_real_init/table_index_indiv.npy")
 pool_index_indiv = {}
@@ -173,7 +176,7 @@ with tf.device("/cpu:0"):
 
 
 	## learning rate
-	lr = tf.constant(0.000001, name='learning_rate')
+	lr = tf.constant(0.0000001, name='learning_rate')
 	global_step = tf.Variable(0, trainable=False)
 	learning_rate = tf.train.exponential_decay(lr, global_step, 10000, 0.96, staircase=True)
 
