@@ -36,8 +36,6 @@ if __name__== "__main__":
 	#fig.savefig("/Users/shuoyang/Desktop/fm_heatmap.jpg")
 
 
-	print "done..."
-
 
 
 

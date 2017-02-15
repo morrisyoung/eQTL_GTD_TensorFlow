@@ -208,6 +208,17 @@ with tf.device("/cpu:0"):
 		#### sample individuals based on tissues avaliable for that individual (unbiased sampling for loss function)
 		list_temp = np.random.multinomial(1, list_p)
 		index = np.argmax(list_temp)
+
+
+
+
+		## Feb.14: still need to sample from incomplete tensor, rather than gathering samples from each individual, to make it unbiased in the loss func (loglike)
+		## to fix this
+
+
+
+
+
 		list_index_x = [index]
 		# pick up sample indices (in the spread version of Y) for that individual
 		list_index_y = pool_index_indiv[index]
