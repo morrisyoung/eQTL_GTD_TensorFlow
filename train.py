@@ -220,6 +220,21 @@ with tf.device("/cpu:0"):
 		list_index_x = np.arange(N)
 		print sess.run(cost_train, feed_dict={placeholder_index_x: list_index_x, x: X, placeholder_index_y: list_index_all, y: Y_spread[list_index_all]})
 
+
+
+		####
+		## save fm per 50 iters
+		if i % 50 == 0:
+			fm_tissue = T.eval(session=sess)
+			fm_indiv = U.eval(session=sess)
+			fm_gene = V.eval(session=sess)
+			np.save("./result/" + str(i) + "_T", fm_tissue)
+			np.save("./result/" + str(i) + "_U", fm_indiv)
+			np.save("./result/" + str(i) + "_V", fm_gene)
+
+
+
+
 	##==== timer
 	elapsed = timeit.default_timer() - start_time
 	print "time spent:", elapsed
