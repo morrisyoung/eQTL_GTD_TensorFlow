@@ -173,7 +173,10 @@ with tf.device("/cpu:0"):
 
 
 	## learning rate
-	lr = tf.constant(0.0000001, name='learning_rate')
+	## 0.00000001 works once, but seems a little slow
+	## 0.00000005 still goes wild
+
+	lr = tf.constant(0.00000003, name='learning_rate')
 	global_step = tf.Variable(0, trainable=False)
 	learning_rate = tf.train.exponential_decay(lr, global_step, 10000, 0.96, staircase=True)
 
@@ -196,6 +199,9 @@ with tf.device("/cpu:0"):
 	sess.run(init, feed_dict={place_beta: Beta})
 
 
+
+	list_error = []
+
 	##==== timer
 	start_time = timeit.default_timer()
 	for i in xrange(1000):
@@ -213,9 +219,9 @@ with tf.device("/cpu:0"):
 
 		## Feb.14: still need to sample from incomplete tensor, rather than gathering samples from each individual, to make it unbiased in the loss func (loglike)
 		N_sample = len(list_index_all) / dimension3
-		print "there are totally",
-		print N_sample,
-		print "samples, and we are sampling mini-batch from them uniformly randomly..."
+		#print "there are totally",
+		#print N_sample,
+		#print "samples, and we are sampling mini-batch from them uniformly randomly..."
 		#
 		size_batch = 20
 		list_temp = np.random.permutation(N_sample)[:size_batch]
@@ -235,7 +241,10 @@ with tf.device("/cpu:0"):
 		## training error
 		N = len(X)
 		list_index_x = np.arange(N)
-		print sess.run(cost_train, feed_dict={placeholder_index_x: list_index_x, x: X, placeholder_index_y: list_index_all, y: Y_spread[list_index_all]})
+		error = sess.run(cost_train, feed_dict={placeholder_index_x: list_index_x, x: X, placeholder_index_y: list_index_all, y: Y_spread[list_index_all]})
+		print error
+		list_error.append(error)
+		np.save("./result/list_error", list_error)
 
 
 
