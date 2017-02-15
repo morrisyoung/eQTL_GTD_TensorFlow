@@ -9,8 +9,10 @@ import timeit
 
 
 
+
 #### code for Genetic Tensor Decomposition (GTD), with Stochastic Gradient Descent (SGD) algorithm
 #### pick individual wiht all his/her samples (of all tissues), with probability propotional to pool size (for this indiv)
+#### (Feb.15) NOTE: the above sampling scheme is not correct; we still need to sample uniformly from all samples (with mini-batch)
 
 
 
@@ -51,7 +53,6 @@ V = np.load("./data_real_init/fm_gene.npy")
 ##
 Beta = np.load("./data_real_init/Beta.npy")
 ##
-#Y = np.load("./data_simu_gtd/Y.npy")
 Y_spread = np.load("./data_real_init/Y_spread.npy")					## this for now is a full tensor
 X = np.load("./data_real_init/X.npy")
 array_ones = np.array([np.ones(len(X))]).T
@@ -68,13 +69,8 @@ list_index_all = np.load("./data_real_init/list_index_all.npy")
 ## for categorical draw:
 list_p = np.load("./data_real_init/list_p_indiv.npy")
 
-
-
-
-
-
-
-
+## for accessing the pos of samples in the incomplete tensor -- (k, indiv)
+list_pos_all = np.load("./data_real_init/list_pos_all.npy")
 
 
 
@@ -87,6 +83,7 @@ dimension1 = len(T)
 dimension2 = len(U)
 dimension3 = len(V)
 feature_len = len(T[0])
+
 
 
 
@@ -190,7 +187,6 @@ with tf.device("/cpu:0"):
 
 
 
-
 	##==================================================================================================================
 	# execute
 	init = tf.initialize_all_variables()
@@ -206,24 +202,34 @@ with tf.device("/cpu:0"):
 
 
 		#### sample individuals based on tissues avaliable for that individual (unbiased sampling for loss function)
-		list_temp = np.random.multinomial(1, list_p)
-		index = np.argmax(list_temp)
-
-
+		# list_temp = np.random.multinomial(1, list_p)
+		# index = np.argmax(list_temp)
+		# list_index_x = [index]
+		# # pick up sample indices (in the spread version of Y) for that individual
+		# list_index_y = pool_index_indiv[index]
+		# # call run and feed in data
+		# sess.run(training_step, feed_dict={placeholder_index_x: list_index_x, x: [X[index]], placeholder_index_y: list_index_y, y: Y_spread[list_index_y]})
 
 
 		## Feb.14: still need to sample from incomplete tensor, rather than gathering samples from each individual, to make it unbiased in the loss func (loglike)
-		## to fix this
-
-
-
-
-
-		list_index_x = [index]
+		N_sample = len(list_index_all) / dimension3
+		print "there are totally",
+		print N_sample,
+		print "samples, and we are sampling mini-batch from them uniformly randomly..."
+		#
+		size_batch = 20
+		list_temp = np.random.permutation(N_sample)[:size_batch]
+		#
+		list_index_x = list_pos_all[list_temp][:,1]
 		# pick up sample indices (in the spread version of Y) for that individual
-		list_index_y = pool_index_indiv[index]
+		list_index_y = []
+		for pos in list_temp:
+			list_index_y += list_index_all[pos*dimension3: pos*dimension3+dimension3].tolist()
+		list_index_y = np.array(list_index_y)
 		# call run and feed in data
-		sess.run(training_step, feed_dict={placeholder_index_x: list_index_x, x: [X[index]], placeholder_index_y: list_index_y, y: Y_spread[list_index_y]})
+		sess.run(training_step, feed_dict={placeholder_index_x: list_index_x, x: X[list_index_x], placeholder_index_y: list_index_y, y: Y_spread[list_index_y]})
+
+
 
 		####
 		## training error
@@ -249,10 +255,6 @@ with tf.device("/cpu:0"):
 	##==== timer
 	elapsed = timeit.default_timer() - start_time
 	print "time spent:", elapsed
-
-
-
-
 
 
 
