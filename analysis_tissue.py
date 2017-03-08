@@ -11,7 +11,7 @@ from scipy.spatial.distance import pdist
 
 ## func:
 ##	plot tissue fm
-##	hierarchical clustering tissues
+##	hierarchical clustering tissue parameters
 
 
 
@@ -34,29 +34,37 @@ if __name__ == "__main__":
 	################################################################################
 	#### plot the tissue fm
 	################################################################################
-	'''
+	"""
 	fm_loading = np.load("./result/T.npy")
 	threshold_factor = 50
-	fm_loading = fm_loading[:,:threshold_factor]
+	fm_loading = fm_loading[:, 0, :threshold_factor]				## NOTE: we have an extra assistant axis in T (form TF)
+
+
+	## TEST range
+	## seems [-1500, 1500] is good enough
+	#print np.sort(np.reshape(fm_loading, -1))[:10]
+	#print np.sort(np.reshape(fm_loading, -1))[-10:-1]
 
 
 	sns.set(context="paper", font="monospace")
 	f, ax = plt.subplots(figsize=(22, 19))		# TODO
 
 
-	sns_plot = sns.heatmap(fm_loading, xticklabels=np.arange(threshold_factor), yticklabels=list_tissues)
+	sns_plot = sns.heatmap(fm_loading, xticklabels=np.arange(threshold_factor), yticklabels=list_tissues, vmin=-1500, vmax=1500)
 	#sns_plot = sns.heatmap(fm_loading)
 	#sns_plot = sns.heatmap(fm_loading, yticklabels=y_label)
 	ax.set_xlabel('Factors')
 	ax.set_ylabel('Tissues')
-#	plt.yticks(rotation=0)
+	#plt.yticks(rotation=0)
 	plt.show()
 
 	#fig = sns_plot.get_figure()
 	#fig.savefig("plot/quantile_c22_gene.jpg")
 	#fig.savefig("/Users/shuoyang/Desktop/fm_gene.jpg")
 	#fig.savefig("/Users/shuoyang/Desktop/fm_heatmap.jpg")
-	'''
+	"""
+
+
 
 
 
@@ -65,9 +73,11 @@ if __name__ == "__main__":
 
 
 	################################################################################
-	#### plot the tissue fm
+	#### hierarchical clustering tissue parameters
 	################################################################################
 	fm_loading = np.load("./result/T.npy")
+	threshold_factor = 50
+	fm_loading = fm_loading[:, 0, :threshold_factor]				## NOTE: we have an extra assistant axis in T (form TF)
 	X = fm_loading
 	print X.shape
 
@@ -93,7 +103,6 @@ if __name__ == "__main__":
 	plt.show()
 	#plt.savefig("/Users/shuoyang/Desktop/d" + str(d) + ".png")
 	#plt.close(fig)
-
 
 
 

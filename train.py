@@ -120,7 +120,7 @@ with tf.device("/cpu:0"):
 
 
 
-	TUD = tf.mul(T, U, name=None)					## dimension1 x dimension2 x feature_len
+	TUD = tf.multiply(T, U, name=None)					## dimension1 x dimension2 x feature_len
 	result = tf.einsum('kid,jd->kij', TUD, V)		## dimension1 x dimension2 x dimension3
 	result_flatten = tf.reshape(result, [-1])
 
@@ -157,13 +157,13 @@ with tf.device("/cpu:0"):
 	lda_VT = tf.constant(.001)
 	norm_sums = tf.add(tf.reduce_sum(tf.abs(T)),
 	                   tf.reduce_sum(tf.abs(V)))
-	regularizer_VT = tf.mul(norm_sums, lda_VT)
+	regularizer_VT = tf.multiply(norm_sums, lda_VT)
 
 
 	## regularization (for Beta)
 	lda_beta = tf.constant(.001)
 	norm_sums_beta = tf.reduce_sum(tf.abs(beta))
-	regularizer_beta = tf.mul(norm_sums_beta, lda_beta)
+	regularizer_beta = tf.multiply(norm_sums_beta, lda_beta)
 
 
 	## total train cost
@@ -264,6 +264,8 @@ with tf.device("/cpu:0"):
 	##==== timer
 	elapsed = timeit.default_timer() - start_time
 	print "time spent:", elapsed
+
+
 
 
 
