@@ -145,12 +145,12 @@ with tf.device("/cpu:0"):
 
 	##==================================================================================================================
 	## cost function
-	base_cost = tf.reduce_sum(tf.square(tf.sub(y_, y)))
+	base_cost = tf.reduce_sum(tf.square(tf.subtract(y_, y)))
 
 
 	## the prior for U --> genetic cost
 	U_sub = tf.gather(U, placeholder_index_x)
-	U_cost = tf.reduce_sum(tf.square(tf.sub(u_, U_sub)))
+	U_cost = tf.reduce_sum(tf.square(tf.subtract(u_, U_sub)))
 
 
 	## the prior for V and T --> regularization (for V and T)
